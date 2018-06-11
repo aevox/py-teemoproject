@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -xe
+
+#-------------------------------------------------------------------------------
+# dependencies
+#-------------------------------------------------------------------------------
+apt-get update
+apt-get --yes upgrade
+apt-get --yes install \
+    python \
+    wget
+
+#-------------------------------------------------------------------------------
+# celery
+#-------------------------------------------------------------------------------
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+pip install --upgrade pip
+pip install -U "celery[redis]"
+
+#-------------------------------------------------------------------------------
+# wkhtmltodpf
+#-------------------------------------------------------------------------------
+wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+apt --yes install ./wkhtmltox_0.12.5-1.bionic_amd64.deb
+mkdir /var/data
+
+#-------------------------------------------------------------------------------
+# Cleaning
+#-------------------------------------------------------------------------------
+rm get-pip.py
+rm wkhtmltox_0.12.5-1.bionic_amd64.deb
+python -m pip uninstall setuptools pip wheel -y
+apt-get --yes purge --autoremove wget
+apt-get clean
