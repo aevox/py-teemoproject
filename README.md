@@ -1,41 +1,48 @@
 # py-teemoproject
-Python wrapper to launch multiple [wkhtmltopdf](https://wkhtmltopdf.org/) binaries.
-It uses [celery](http://www.celeryproject.org/) with [redis](https://redis.io) as broker.
+Python application that converts html pages to pdf and pushes them into an [owncloud](https://owncloud.org/) directory.
+It is essentially a wrapper around [wkhtmltopdf](https://wkhtmltopdf.org/) and uses [celery](http://www.celeryproject.org/) with [redis](https://redis.io) as broker.
 
 
 ## Build
 
 To build a simple container.
 ```
-docker build -t pyteemoproject .
-```
-
-A docker-compose.yml file is present for development purposes.
-```
-docker-compose up
+docker build -t py-teemoproject .
 ```
 
 ## Configuration
 
 The following environment variables are available:
 
-|   Environment variable  |                                    default                                    |
-|:-----------------------:|:-----------------------------------------------------------------------------:|
-|       `RESULT_DIR`      |                                 `"/var/data"`                                 |
-|     `REDIS_ADDRESS`     |                                 `"localhost"`                                 |
-|       `REDIS_PORT`      |                                     `6379`                                    |
-|    `WKHTMLTODPF_PATH`   |                         `"/usr/local/bin/wkhtmltopdf"`                        |
-|    `WKHTMLTOPDF_ARGS`   | `"--quiet,--enable-external-links,--print-media-type,--javascript-delay,300"` |
-| `WKHTMLTOPDF_FOOTERURL` |                                      `""`                                     |
+|   Environment variable  |                                    default                                  |
+|:-----------------------:|:---------------------------------------------------------------------------:|
+|     `REDIS_ADDRESS`     |                                 `localhost`                                 |
+|       `REDIS_PORT`      |                                    `6379`                                   |
+|        `REDIS_DB`       |                                     `0`                                     |
+|    `WKHTMLTODPF_PATH`   |                         `/usr/local/bin/wkhtmltopdf`                        |
+|    `WKHTMLTOPDF_ARGS`   | `--quiet --enable-external-links --print-media-type --javascript-delay 300` |
+|      `OWNCLOUD_URL`     |                              `http://localhost`                             |
+|     `OWNCLOUD_USER`     |                                   `admin`                                   |
+|   `OWNCLOUD_PASSWORD`   |                                   `admin`                                   |
+|    `OWNCLOUD_BASEDIR`   |                              `py-teemoproject`                              |
 
 
-## Development
+## Run
 
 ```
-docker-compose up
+docker run --name py-teemoproject-app py-teemoproject
 ```
 
 To add url to convert:
 ```
-docker exec -it pyteemoproject_worker_1 python htmltopdf.py www.google.com
+docker exec -it py-teemoproject-app python htmltopdf.py www.google.com remote/path/in/owncloud.pdf
+```
+If the path is not specified, the pdf will be written in `OWNCLOUD_BASEDIR`. The pdf name will be the md5sum of the url with the «.pdf» extension.
+
+## Development
+
+For development purposes a docker-compose.yml file is available.
+It contains a Redis server and a Owncloud server.
+```
+docker-compose up
 ```

@@ -1,0 +1,2 @@
+celery[redis]==4.2.0
+pyocclient==0.4

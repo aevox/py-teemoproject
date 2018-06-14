@@ -1,4 +1,5 @@
-version: '2'
+version: '3'
+
 
 services:
     redis:
@@ -6,15 +7,25 @@ services:
         image: redis:latest
         ports:
             - "6379:6379"
-    worker:
+    owncloud:
+        hostname: owncloud
+        image: owncloud/server:9.1
+        ports:
+            - "80:80"
+        environment:
+            - OWNCLOUD_DOMAIN=owncloud
+            - OWNCLOUD_ADMIN_USERNAME=admin
+            - OWNCLOUD_ADMIN_PASSWORD=admin
+    app:
         build:
             context: .
             dockerfile: Dockerfile
-        volumes:
-            - /tmp/py-teemoproject:/var/py-teemoproject
         links:
             - redis
+            - owncloud
         depends_on:
             - redis
+            - owncloud
         environment:
             - REDIS_ADDRESS=redis
+            - OWNCLOUD_URL=http://owncloud

@@ -12,12 +12,13 @@ apt-get --yes install \
     wget
 
 #-------------------------------------------------------------------------------
-# celery
+# python dependcies
 #-------------------------------------------------------------------------------
 wget https://bootstrap.pypa.io/get-pip.py
 python get-pip.py
 pip install --upgrade pip
 pip install -U "celery[redis]"
+pip install pyocclient
 
 #-------------------------------------------------------------------------------
 # wkhtmltodpf
